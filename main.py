@@ -290,7 +290,7 @@ async def start_scrape(
     user_tier = "free"  # This should come from user data
     
     # Parse the form data
-    keywords_list = json.loads(keywords)
+    keywords_list = [line.strip().lower() for line in keywords.file if line.strip()]
     groups_list = json.loads(groups) if groups else []
     zip_codes_list = json.loads(zip_codes) if zip_codes else []
     
