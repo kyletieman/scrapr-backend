@@ -297,7 +297,13 @@ async def start_scrape(
     for line in (await keywords.read()).decode("utf-8").splitlines()
     if line.strip()
 ]
-    groups_list = json.loads(groups) if groups else []
+
+    groups_content = await groups.read()
+if groups_content:
+    groups_list = json.loads(groups_content.decode("utf-8"))
+else:
+    groups_list = []
+
     zip_codes_list = json.loads(zip_codes) if zip_codes else []
     
     # Generate scrape ID
