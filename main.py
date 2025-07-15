@@ -275,12 +275,14 @@ async def health_check():
     """Health check endpoint for Railway"""
     return {"status": "healthy", "timestamp": datetime.now().isoformat()}
 
+from fastapi import UploadFile, File, Form
+
 @app.post("/api/scrape/start")
 async def start_scrape(
     type: str = Form(...),
-    keywords: str = Form(...),
-    groups: str = Form(None),
-    zip_codes: str = Form(None),
+    keywords: UploadFile = File(...),
+    groups: UploadFile = File(...),
+    zip_codes: str = Form(""),
     cookies: UploadFile = File(...),
     authorization: str = None
 ):
@@ -290,7 +292,11 @@ async def start_scrape(
     user_tier = "free"  # This should come from user data
     
     # Parse the form data
-    keywords_list = [line.strip().lower() for line in keywords.file if line.strip()]
+    keywords_list = [
+    line.strip().lower()
+    for line in (await keywords.read()).decode("utf-8").splitlines()
+    if line.strip()
+]
     groups_list = json.loads(groups) if groups else []
     zip_codes_list = json.loads(zip_codes) if zip_codes else []
     
